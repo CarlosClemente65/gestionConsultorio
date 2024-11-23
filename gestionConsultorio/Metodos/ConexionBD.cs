@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using gestionBD;
+﻿using gestionBD;
 using System.Data.SQLite;
 
 
@@ -42,7 +37,7 @@ namespace gestionConsultorio.Metodos
         }
 
 
-        private void CrearTablaUsuarios()
+        public void CrearTablaUsuarios()
         {
             //Crea la tabla de usuarios
             string sql = @"CREATE TABLE usuarios
@@ -61,11 +56,22 @@ namespace gestionConsultorio.Metodos
             CrearTablas(sql, "clientes");
         }
 
-        private void CrearTablaProfesionales()
+        public void CrearTablaProfesionales()
         {
             throw new NotImplementedException();
         }
 
+        public void CrearTablaClientes()
+        {
+            //Pendiente de implementacion
+            throw new NotImplementedException();
+        }
+
+        public void CrearTablaProveedores()
+        {
+            //Pendiente de implementacion
+            throw new NotImplementedException();
+        }
 
         public void CrearTablas(string sql, string tabla)
         {

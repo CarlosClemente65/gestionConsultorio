@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using gestionBD;
 using gestionConsultorio.Metodos;
 
@@ -11,8 +6,8 @@ namespace gestionConsultorio.Clases
 {
     public class Usuarios : Personas
     {
-        private string? Apellidos { get; set; }
-        private int CodUsuario { get; set; }
+        public int CodUsuario { get; set; }
+        public string? Apellidos { get; set; }
 
         private List<Usuarios> listaUsuarios = new List<Usuarios>();
 
@@ -22,32 +17,49 @@ namespace gestionConsultorio.Clases
             return listaUsuarios;
         }
 
-        public void AgregarUsuario(Usuarios usuario)
+        public bool AgregarUsuario(Usuarios usuario)
         {
             //Metodo para agregar un usuario
             if(!listaUsuarios.Any(u => u.CodUsuario == usuario.CodUsuario))
             {
                 listaUsuarios.Add(usuario);
+                return true;
             }
             else
             {
                 throw new ArgumentException("No se puede añadir el uuario. Ya existe uno con ese codigo");
             }
+        }
+
+        public bool ActualizarUsuario(Usuarios usuario)
+        {
+            // Método para actualizar los datos de un usuario en la lista
+            var existeUsuario = listaUsuarios.FirstOrDefault(u => u.CodUsuario == usuario.CodUsuario);
+
+            if(existeUsuario != null)
+            {
+                listaUsuarios[listaUsuarios.IndexOf(existeUsuario)] = usuario;
+                return true;
+            }
+            else
+            {
+                throw new ArgumentException("No se ha actualizado el usuario.");
+            }
 
         }
 
-        public bool ActualizarUsuario(int _codUsuario, string _nif, string _nombre, string _apellidos, string _direccion, string _codPostal, string _poblacion, string _provincia, string _telefono, string _email, bool _activo)
+        public void EliminarUsuario(int codUsuario)
         {
-            // Método para actualizar los datos de un usuario en la lista
-            Usuarios usuario = listaUsuarios.FirstOrDefault(u => u.CodUsuario == _codUsuario);
-
-            if(usuario != null)
+            // Método para eliminar un usuario
+            var existeUsuario = listaUsuarios.FirstOrDefault(u => u.CodUsuario == codUsuario);
+            if(existeUsuario != null)
             {
-                usuario.ActualizarDatos(_nif, _nombre, _direccion, _codPostal, _poblacion, _provincia, _telefono, _email, _activo);
-                Apellidos = _apellidos;
-                return true; // Actualización exitosa
+                listaUsuarios.Remove(existeUsuario);
             }
-            return false; // Índice inválido
+            else
+            {
+                throw new KeyNotFoundException($"No se encontró ningún usuario con CodUsuario = {codUsuario}");
+            }
         }
 
         public List<Usuarios> CargarUsuariosBC()
@@ -57,30 +69,31 @@ namespace gestionConsultorio.Clases
 
             try
             {
-                conectar conexion = new conectar(ConfiguracionBD.RutaBD);
-                conexion.crearConexion();
-                string sql = "SELECT codUsuario, nif, nombre, apellidos, direccion, codPostal, poblacion, provincia, telefono, email, activo FROM usuarios";
-                DataTable tablaUsuarios = (conexion.consultaSQL(sql));
-                foreach(DataRow fila in tablaUsuarios.Rows)
+                using(var conexion = new conectar(ConfiguracionBD.RutaBD))
                 {
-                    Usuarios usuario = new Usuarios
+                    conexion.crearConexion();
+                    string sql = "SELECT codUsuario, nif, nombre, apellidos, direccion, codPostal, poblacion, provincia, telefono, email, activo FROM usuarios";
+                    DataTable tablaUsuarios = (conexion.consultaSQL(sql));
+                    foreach(DataRow fila in tablaUsuarios.Rows)
                     {
-                        CodUsuario = Convert.ToInt32(fila["codUsuario"]),
-                        NIF = fila["nif"].ToString(),
-                        Nombre = fila["nombre"].ToString(),
-                        Apellidos = fila["apellidos"].ToString(),
-                        Direccion = fila["direccion"].ToString(),
-                        CodPostal = fila["codPostal"].ToString(),
-                        Poblacion = fila["poblacion"].ToString(),
-                        Provincia = fila["provincia"].ToString(),
-                        Telefono = fila["telefono"].ToString(),
-                        Email = fila["email"].ToString(),
-                        Activo = Convert.ToBoolean(fila["activo"])
-                    };
+                        Usuarios usuario = new Usuarios
+                        {
+                            CodUsuario = fila["codUsuario"] != DBNull.Value ? Convert.ToInt32(fila["codUsuario"]) : 0,
+                            NIF = fila["nif"]?.ToString(),
+                            Nombre = fila["nombre"]?.ToString(),
+                            Apellidos = fila["apellidos"]?.ToString(),
+                            Direccion = fila["direccion"]?.ToString(),
+                            CodPostal = fila["codPostal"]?.ToString(),
+                            Poblacion = fila["poblacion"]?.ToString(),
+                            Provincia = fila["provincia"]?.ToString(),
+                            Telefono = fila["telefono"]?.ToString(),
+                            Email = fila["email"]?.ToString(),
+                            Activo = fila["activo"] != DBNull.Value && Convert.ToBoolean(fila["activo"])
+                        };
 
-                    listaUsuarios.Add(usuario);
+                        listaUsuarios.Add(usuario);
+                    }
                 }
-
             }
 
             catch(Exception ex)

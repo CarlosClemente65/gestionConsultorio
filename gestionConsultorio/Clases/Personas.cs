@@ -7,31 +7,30 @@ using System.Threading.Tasks;
 
 namespace gestionConsultorio.Clases
 {
-    public class Personas
+    public interface IPersona
     {
-        protected string? NIF { get; set; }
-        protected string? Nombre { get; set; }
-        protected string? Direccion { get; set; }
-        protected string? CodPostal { get; set; }
-        protected string? Poblacion { get; set; }
-        protected string? Provincia { get; set; }
-        protected string? Telefono { get; set; }
-        protected string? Email { get; set; }
-        protected bool Activo { get; set; }
+        string? NIF { get; set; }
+        string? Nombre { get; set; }
+        string? Direccion { get; set; }
+        string? CodPostal { get; set; }
+        string? Poblacion { get; set; }
+        string? Provincia { get; set; }
+        string? Telefono { get; set; }
+        string? Email { get; set; }
+        bool Activo { get; set; }
 
+    }
 
-        public void ActualizarDatos(string _nif, string _nombre, string _direccion, string _codPostal, string _poblacion, string _provincia, string _telefono, string _email, bool _activo = true)
-        {
-            // Método para actualizar los datos
-            NIF = _nif;
-            Nombre = _nombre;
-            Direccion = _direccion;
-            CodPostal = _codPostal;
-            Poblacion = _poblacion;
-            Provincia = _provincia;
-            Telefono = _telefono;
-            Email = _email;
-            Activo = _activo;
-        }
+    public class Personas : IPersona
+    {
+        public string? NIF { get; set; }
+        public string? Nombre { get; set; }
+        public string? Direccion { get; set; }
+        public string? CodPostal { get; set; }
+        public string? Poblacion { get; set; }
+        public string? Provincia { get; set; }
+        public string? Telefono { get; set; }
+        public string? Email { get; set; }
+        public bool Activo { get; set; }
     }
 }

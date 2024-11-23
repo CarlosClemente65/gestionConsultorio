@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace gestionConsultorio.Clases
 {
-    public class Profesionales
+    public class Profesionales:Personas,IPersona
     {
-        private string? Apellido { get; set; }
-        private int CodProfesional { get; set; }
-        private string? Especialidad { get; set; }
-        private List<Profesionales> ListaProfesionales { get; set; }
+        public string? Apellido { get; set; }
+        public int CodProfesional { get; set; }
+        public string? Especialidad { get; set; }
+        public List<Profesionales> ListaProfesionales { get; set; }
 
         public List<Profesionales> obtenerProfesionales()
         {
